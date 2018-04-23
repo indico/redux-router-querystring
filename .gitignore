@@ -1,0 +1,17 @@
+# Editors
+*.swp
+.idea/
+
+# Node
+node_modules/
+*.tgz
+
+# Babel
+/dist/
+
+# Only apps should have lockfiles
+yarn.lock
+package-lock.json
+
+# Jest
+coverage/

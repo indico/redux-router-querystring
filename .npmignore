@@ -1,0 +1,9 @@
+*.swp
+*.log
+*.lock
+.idea/
+src/
+*.tgz
+coverage/
+tests/
+.*
