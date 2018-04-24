@@ -28,7 +28,8 @@ const _applySerialization = (stateData, map) => {
     return result;
 };
 
-export const queryStringMiddleware = (history, {reduxPathname, routes}) => {
+export const queryStringMiddleware = (history, {reduxPathname, routes}, config = {}) => {
+    const {usePush} = config;
     return store => next => action => {
         const result = next(action);
         const state = store.getState();
@@ -43,7 +44,12 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}) => {
                     data = _applySerialization(data, serialize);
                 }
                 const queryString = qs.stringify(data);
-                history.push(`${currentPath}?${queryString}`);
+                const path = `${currentPath}?${queryString}`;
+                if (usePush) {
+                    history.push(path);
+                } else {
+                    history.replace(path);
+                }
             }
         }
         return result;
