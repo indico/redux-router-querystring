@@ -1,6 +1,7 @@
 {
   "name": "redux-router-querystring",
   "version": "0.0.2",
+  "description": "Redux middleware and reducer that handle synchronization between query strings and state.",
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist/ && babel src/ --out-dir dist/",
@@ -9,8 +10,31 @@
     "test": "jest tests/ --coverage",
     "dev": "babel src/ --watch --out-dir dist/ --verbose"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/indico/redux-router-querystring.git"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "router",
+    "history",
+    "querystring"
+  ],
   "author": "Indico Team",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/indico/redux-router-querystring/issues"
+  },
+  "homepage": "https://github.com/indico/redux-router-querystring#readme",
+  "dependencies": {
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.1",
+    "lodash.set": "^4.3.2",
+    "moment": "^2.22.1",
+    "qs": "^6.5.1",
+    "validator": "^9.4.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.44",
     "@babel/core": "^7.0.0-beta.44",
@@ -21,13 +45,5 @@
     "eslint-plugin-babel": "^5.0.0",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jest": "^21.15.1"
-  },
-  "dependencies": {
-    "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.1",
-    "lodash.set": "^4.3.2",
-    "moment": "^2.22.1",
-    "qs": "^6.5.1",
-    "validator": "^9.4.1"
   }
 }
