@@ -24,9 +24,10 @@ export const mapQueryFields = (fields, mapping) => {
         if (value === undefined) {
             return {};
         }
-        if (!validator(value)) {
+        if (validator && !validator(value)) {
             throw new Error(`Failed to validate query field: ${key} = ${value}`);
         }
+
         value = sanitizer ? sanitizer(value) : value;
         setDeep(data, stateField, value);
     });
