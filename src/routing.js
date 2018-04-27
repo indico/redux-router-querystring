@@ -31,6 +31,8 @@ const _applySerialization = (stateData, map) => {
     return result;
 };
 
+export const stateToQueryString = (state, map) => qs.stringify(_applySerialization(state, map));
+
 export const queryStringMiddleware = (history, {reduxPathname, routes}, config = {}) => {
     const {usePush} = config;
     return store => next => action => {

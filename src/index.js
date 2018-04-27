@@ -1,5 +1,5 @@
-import {createQueryStringReducer, queryStringMiddleware} from './routing';
+import {createQueryStringReducer, queryStringMiddleware, stateToQueryString} from './routing';
 import {validator} from './validation';
 
 
-export {createQueryStringReducer, queryStringMiddleware, validator};
+export {createQueryStringReducer, queryStringMiddleware, stateToQueryString, validator};
