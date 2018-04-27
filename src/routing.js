@@ -43,7 +43,12 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
 
         if (routeConfig) {
             const {listen, select, serialize} = routeConfig;
-            let data = _pruneNullLeaves(select(state));
+            const qsState = select(state);
+
+            if (qsState === null) {
+                return result;
+            }
+            let data = _pruneNullLeaves(qsState);
             if (listen === action.type) {
                 if (serialize) {
                     data = _applySerialization(data, serialize);
