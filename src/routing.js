@@ -5,6 +5,9 @@ import {mapQueryFields} from './validation';
 
 
 const _pruneNullLeaves = (obj) => {
+    if (!Object.entries(obj).length) {
+        return {};
+    }
     return Object.assign(...Object.entries(obj).map(([k, v]) => {
         if (v === null) {
             return {};
