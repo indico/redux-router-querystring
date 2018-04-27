@@ -1,9 +1,9 @@
 import moment from 'moment';
-import valid from 'validator';
+import validatorModule from 'validator';
 import setDeep from 'lodash.set';
 
 
-const funcs = Object.entries(valid)
+const funcs = Object.entries(validatorModule)
     .filter(([, fn]) => typeof fn === 'function')
     .map(([key, fn]) => {
         return {[key]: (...options) => (str) => fn(str, ...options)};
@@ -18,13 +18,13 @@ export const validator = Object.assign({
 export const mapQueryFields = (fields, mapping) => {
     const data = {};
     Object.entries(mapping).forEach(([key, rule]) => {
-        const {validator, sanitizer, stateField} = rule;
+        const {validator: valid, sanitizer, stateField} = rule;
         let value = fields[key];
 
         if (value === undefined) {
             return {};
         }
-        if (validator && !validator(value)) {
+        if (valid && !valid(value)) {
             throw new Error(`Failed to validate query field: ${key} = ${value}`);
         }
 
