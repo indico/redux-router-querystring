@@ -66,21 +66,25 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
     };
 };
 
-export const createQueryStringReducer = (config, namespaceFunc, qsFunc) => {
+export const createQueryStringReducer = (config, qsFunc, resetFunc = (s => s)) => {
     return (state, action) => {
-        const queryString = qsFunc(state, action);
+        const result = qsFunc(state, action);
+
+        if (!result) {
+            return resetFunc(state, null, null);
+        }
+
+        const {queryString, namespace} = result;
         if (queryString) {
             const values = qs.parse(queryString);
-            const namespace = namespaceFunc ? namespaceFunc(state, action) : null;
             let newValues = null;
             try {
                 newValues = mapQueryFields(values, config);
+                return merge({}, state, namespace ? {[namespace]: newValues} : newValues);
             } catch (e) {
                 console.warn(e);
-                newValues = {};
             }
-            return merge({}, state, namespace ? {[namespace]: newValues} : newValues);
         }
-        return state;
+        return resetFunc(state, namespace, queryString);
     };
 };
