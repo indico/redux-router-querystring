@@ -29,7 +29,11 @@ export const mapQueryFields = (fields, mapping) => {
         }
 
         value = sanitizer ? sanitizer(value) : value;
-        setDeep(data, stateField, value);
+        if (typeof stateField === 'string') {
+            setDeep(data, stateField, value);
+        } else {
+            stateField.parse(value, data);
+        }
     });
 
     return data;

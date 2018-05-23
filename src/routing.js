@@ -27,7 +27,7 @@ const _pruneNullLeaves = (obj) => {
 const _applySerialization = (stateData, map) => {
     const result = {};
     Object.entries(map).forEach(([k, {stateField}]) => {
-        const val = getDeep(stateData, stateField);
+        const val = typeof stateField === 'string' ? getDeep(stateData, stateField) : stateField.serialize(stateData);
         if (val === null) {
             return;
         }
