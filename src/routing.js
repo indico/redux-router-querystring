@@ -4,6 +4,11 @@ import getDeep from 'lodash.get';
 import {mapQueryFields} from './validation';
 
 
+const SERIALIZATION_OPTIONS = {
+    allowDots: true,
+    arrayFormat: 'repeat'
+};
+
 const _pruneNullLeaves = (obj) => {
     if (!Object.entries(obj).length) {
         return {};
@@ -31,7 +36,7 @@ const _applySerialization = (stateData, map) => {
     return result;
 };
 
-export const stateToQueryString = (state, map) => qs.stringify(_applySerialization(state, map));
+export const stateToQueryString = (state, map) => qs.stringify(_applySerialization(state, map), SERIALIZATION_OPTIONS);
 
 export const queryStringMiddleware = (history, {reduxPathname, routes}, config = {}) => {
     const {usePush} = config;
@@ -53,7 +58,7 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
                 if (serialize) {
                     data = _applySerialization(data, serialize);
                 }
-                const queryString = qs.stringify(data);
+                const queryString = qs.stringify(data, SERIALIZATION_OPTIONS);
                 const path = `${currentPath}?${queryString}`;
                 if (usePush) {
                     history.push(path);
@@ -76,7 +81,9 @@ export const createQueryStringReducer = (config, qsFunc, resetFunc = (s => s)) =
 
         const {queryString, namespace} = result;
         if (queryString) {
-            const values = qs.parse(queryString);
+            const values = qs.parse(queryString, {
+                allowDots: true
+            });
             let newValues = null;
             try {
                 newValues = mapQueryFields(values, config);
