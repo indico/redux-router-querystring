@@ -16,6 +16,8 @@ const _pruneNullLeaves = (obj) => {
     return Object.assign(...Object.entries(obj).map(([k, v]) => {
         if (v === null) {
             return {};
+        } else if (Array.isArray(v)) {
+            return {[k]: v.filter(e => e !== null)};
         } else if (typeof v === 'object') {
             return {[k]: _pruneNullLeaves(v)};
         } else {
@@ -27,16 +29,15 @@ const _pruneNullLeaves = (obj) => {
 const _applySerialization = (stateData, map) => {
     const result = {};
     Object.entries(map).forEach(([k, {stateField}]) => {
-        const val = typeof stateField === 'string' ? getDeep(stateData, stateField) : stateField.serialize(stateData);
-        if (val === null) {
-            return;
-        }
-        result[k] = val;
+        result[k] = typeof stateField === 'string' ? getDeep(stateData, stateField, null) : stateField.serialize(stateData);
     });
     return result;
 };
 
-export const stateToQueryString = (state, map) => qs.stringify(_applySerialization(state, map), SERIALIZATION_OPTIONS);
+export const stateToQueryString = (state, map) => {
+    const serializedState = _pruneNullLeaves(_applySerialization(state, map));
+    return qs.stringify(serializedState, SERIALIZATION_OPTIONS);
+};
 
 export const queryStringMiddleware = (history, {reduxPathname, routes}, config = {}) => {
     const {usePush} = config;
@@ -44,20 +45,26 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
         const result = next(action);
         const state = store.getState();
         const currentPath = reduxPathname(state);
-        const routeConfig = routes[currentPath];
+        const pathConfig = routes[currentPath];
+        const routesConfig = pathConfig && !_.isArray(pathConfig) ? [pathConfig] : pathConfig;
 
-        if (routeConfig) {
-            const {listen, select, serialize} = routeConfig;
-            const qsState = select(state);
-
-            if (qsState === null) {
-                return result;
-            }
-            let data = _pruneNullLeaves(qsState);
-            if (listen === action.type) {
+        if (!_.isEmpty(routesConfig)) {
+            const prevData = qs.parse(history.location.search.slice(1), {
+                allowDots: true
+            });
+            const dataList = routesConfig.filter(
+                ({listen}) => listen === action.type
+            ).map(({select, serialize}) => {
+                const qsState = select(state);
+                let data = _pruneNullLeaves(qsState);
                 if (serialize) {
                     data = _applySerialization(data, serialize);
                 }
+                return data;
+            });
+            if (!_.isEmpty(dataList)) {
+                let data = Object.assign(...dataList);
+                data = _pruneNullLeaves({...prevData, ...data});
                 const queryString = qs.stringify(data, SERIALIZATION_OPTIONS);
                 const path = `${currentPath}?${queryString}`;
                 if (usePush) {
