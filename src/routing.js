@@ -34,8 +34,8 @@ const _applySerialization = (stateData, map) => {
     return result;
 };
 
-export const stateToQueryString = (state, map) => {
-    const serializedState = _pruneNullLeaves(_applySerialization(state, map));
+export const stateToQueryString = (state, ...maps) => {
+    const serializedState = Object.assign(...maps.map((map) => _pruneNullLeaves(_applySerialization(state, map))));
     return qs.stringify(serializedState, SERIALIZATION_OPTIONS);
 };
 
