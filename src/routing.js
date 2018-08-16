@@ -46,9 +46,9 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
         const state = store.getState();
         const currentPath = reduxPathname(state);
         const pathConfig = routes[currentPath];
-        const routesConfig = pathConfig && !_.isArray(pathConfig) ? [pathConfig] : pathConfig;
+        const routesConfig = pathConfig && !Array.isArray(pathConfig) ? [pathConfig] : pathConfig;
 
-        if (!_.isEmpty(routesConfig)) {
+        if (routesConfig && routesConfig.length) {
             const prevData = qs.parse(history.location.search.slice(1), {
                 allowDots: true
             });
@@ -62,7 +62,7 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
                 }
                 return data;
             });
-            if (!_.isEmpty(dataList)) {
+            if (dataList.length) {
                 let data = Object.assign(...dataList);
                 data = _pruneNullLeaves({...prevData, ...data});
                 const queryString = qs.stringify(data, SERIALIZATION_OPTIONS);
