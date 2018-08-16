@@ -1,6 +1,7 @@
 import qs from 'qs';
 import merge from 'lodash.merge';
 import getDeep from 'lodash.get';
+import setDeep from 'lodash.set';
 import {mapQueryFields} from './validation';
 
 
@@ -94,7 +95,7 @@ export const createQueryStringReducer = (config, qsFunc, resetFunc = (s => s)) =
             let newValues = null;
             try {
                 newValues = mapQueryFields(values, config);
-                return merge({}, state, namespace ? {[namespace]: newValues} : newValues);
+                return merge({}, state, namespace ? setDeep({}, namespace, newValues) : newValues);
             } catch (e) {
                 console.warn(e);
             }
