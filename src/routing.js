@@ -82,9 +82,8 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
 export const createQueryStringReducer = (config, qsFunc, resetFunc = (s => s)) => {
     return (state, action) => {
         const result = qsFunc(state, action);
-
         if (!result) {
-            return resetFunc(state, null, null);
+            return resetFunc(state, null);
         }
 
         const {queryString, namespace} = result;
@@ -98,8 +97,9 @@ export const createQueryStringReducer = (config, qsFunc, resetFunc = (s => s)) =
                 return merge({}, state, namespace ? setDeep({}, namespace, newValues) : newValues);
             } catch (e) {
                 console.warn(e);
+                return resetFunc(state, namespace, true);
             }
         }
-        return resetFunc(state, namespace, queryString);
+        return resetFunc(state, namespace);
     };
 };
