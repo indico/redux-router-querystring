@@ -54,7 +54,7 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
                 allowDots: true
             });
             const dataList = routesConfig.filter(
-                ({listen}) => listen === action.type
+                ({listen}) => Array.isArray(listen) ? listen.includes(action.type) : listen === action.type
             ).map(({select, serialize}) => {
                 const qsState = select(state);
                 let data = _pruneNullLeaves(qsState);
