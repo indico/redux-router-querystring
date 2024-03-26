@@ -1,6 +1,6 @@
 import moment from 'moment';
 import validatorModule from 'validator';
-import setDeep from 'lodash.set';
+import setDeep from 'lodash/set';
 
 
 const funcs = Object.entries(validatorModule)

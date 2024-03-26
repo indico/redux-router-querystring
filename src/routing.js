@@ -1,7 +1,7 @@
 import qs from 'qs';
-import merge from 'lodash.merge';
-import getDeep from 'lodash.get';
-import setDeep from 'lodash.set';
+import merge from 'lodash/merge';
+import getDeep from 'lodash/get';
+import setDeep from 'lodash/set';
 import {mapQueryFields} from './validation';
 
 
@@ -54,7 +54,7 @@ export const queryStringMiddleware = (history, {reduxPathname, routes}, config =
                 allowDots: true
             });
             const dataList = routesConfig.filter(
-                ({listen}) => Array.isArray(listen) ? listen.includes(action.type) : listen === action.type
+                ({listen}) => (Array.isArray(listen) ? listen.includes(action.type) : listen === action.type)
             ).map(({select, serialize}) => {
                 const qsState = select(state);
                 let data = _pruneNullLeaves(qsState);

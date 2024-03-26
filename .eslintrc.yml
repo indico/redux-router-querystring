@@ -1,11 +1,10 @@
-extends:
-  - 'indico'
-  - 'indico/babel'
-  - 'plugin:jest/recommended'
-
 env:
   browser: true
   es6: true
 
-plugins:
-  - jest
+parserOptions:
+  sourceType: module
+  ecmaVersion: latest
+
+extends:
+  - 'indico'
