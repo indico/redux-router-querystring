@@ -34,35 +34,34 @@ jobs:
           retention-days: 7
           path: ./pkg
 
-  # create-github-release:
-  #   name: Create GitHub release 🐙
-  #   # Upload wheel to a GitHub release. It remains available as a build artifact for a while as well.
-  #   needs: build
-  #   runs-on: ubuntu-24.04
-  #   permissions:
-  #     contents: write
-  #   steps:
-  #     - name: Download build artifacts 📦
-  #       uses: actions/download-artifact@v6
-  #       with:
-  #         path: ./pkg
-  #     - name: Create draft release 🐙
-  #       run: >-
-  #         gh release create
-  #         --verify-tag
-  #         --draft
-  #         --repo ${{ github.repository }}
-  #         --title ${{ github.ref_name }}
-  #         ${{ github.ref_name }}
-  #         pkg/*
-  #       env:
-  #         GH_TOKEN: ${{ github.token }}
+  create-github-release:
+    name: Create GitHub release 🐙
+    # Upload apackage to a GitHub release. It remains available as a build artifact for a while as well.
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts 📦
+        uses: actions/download-artifact@v6
+        with:
+          path: ./pkg
+      - name: Create draft release 🐙
+        run: >-
+          gh release create
+          --verify-tag
+          --draft
+          --repo ${{ github.repository }}
+          --title ${{ github.ref_name }}
+          ${{ github.ref_name }}
+          pkg/*
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   publish-npm:
     name: Publish 🚀
-    needs: build
-    # Wait for approval before attempting to upload to NPM. This allows reviewing the
-    # files in the draft release.
+    needs: [build, create-github-release]
+    # Wait for approval before attempting to upload to NPM. This allows reviewing the files in the draft release.
     environment: publish
     runs-on: ubuntu-22.04
     permissions:
@@ -82,11 +81,11 @@ jobs:
           path: ./pkg
       - name: Publish to NPM 🚀
         run: npm publish ./pkg/*.tgz --tag latest --access public --provenance
-      # - name: Publish GitHub release 🐙
-      #   run: >-
-      #     gh release edit
-      #     --draft=false
-      #     --repo ${{ github.repository }}
-      #     ${{ github.ref_name }}
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
+      - name: Publish GitHub release 🐙
+        run: >-
+          gh release edit
+          --draft=false
+          --repo ${{ github.repository }}
+          ${{ github.ref_name }}
+        env:
+          GH_TOKEN: ${{ github.token }}
